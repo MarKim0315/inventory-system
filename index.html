@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>TechGeekPH Inventory</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef2f7;
+      --bg-accent: #dbeafe;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --surface-muted: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --strong: #020617;
+      --line: #d8e0eb;
+      --line-strong: #cbd5e1;
+      --primary: #2563eb;
+      --primary-strong: #1d4ed8;
+      --primary-soft: #dbeafe;
+      --teal: #0f766e;
+      --teal-strong: #115e59;
+      --danger: #b91c1c;
+      --danger-strong: #991b1b;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --low-bg: #fef3c7;
+      --low-text: #92400e;
+      --out-bg: #fee2e2;
+      --out-text: #991b1b;
+      --info-bg: #dbeafe;
+      --info-text: #1e40af;
+      --adjust-bg: #ede9fe;
+      --adjust-text: #5b21b6;
+      --input-bg: #ffffff;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --radius: 8px;
+      --page-x: clamp(10px, 1.8vw, 24px);
+      --page-y: clamp(12px, 2vw, 24px);
+      --control-h: 40px;
+      --table-max-h: min(54dvh, 560px);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #0b1020;
+        --bg-accent: #172554;
+        --surface: #101827;
+        --surface-soft: #0f172a;
+        --surface-muted: #182235;
+        --text: #e5edf8;
+        --muted: #94a3b8;
+        --strong: #f8fafc;
+        --line: #263244;
+        --line-strong: #334155;
+        --primary: #60a5fa;
+        --primary-strong: #3b82f6;
+        --primary-soft: #172554;
+        --teal: #2dd4bf;
+        --teal-strong: #14b8a6;
+        --danger: #f87171;
+        --danger-strong: #ef4444;
+        --ok-bg: rgba(34, 197, 94, 0.16);
+        --ok-text: #86efac;
+        --low-bg: rgba(245, 158, 11, 0.16);
+        --low-text: #fcd34d;
+        --out-bg: rgba(248, 113, 113, 0.16);
+        --out-text: #fca5a5;
+        --info-bg: rgba(96, 165, 250, 0.16);
+        --info-text: #bfdbfe;
+        --adjust-bg: rgba(167, 139, 250, 0.16);
+        --adjust-text: #c4b5fd;
+        --input-bg: #0b1220;
+        --shadow: 0 20px 48px rgba(0, 0, 0, 0.26);
+        --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.18);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      letter-spacing: 0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-width: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--bg-accent) 54%, transparent), transparent 32rem),
+        linear-gradient(180deg, var(--bg), var(--bg));
+      color: var(--text);
+      font-family: Inter, Arial, Helvetica, sans-serif;
+    }
+
+    html {
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow-x: hidden;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    .topbar {
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar-inner {
+      width: min(1520px, calc(100% - (var(--page-x) * 2)));
+      margin: 0 auto;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid color-mix(in srgb, var(--line-strong) 72%, transparent);
+      overflow: hidden;
+      padding: 5px;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.2;
+      font-weight: 800;
+      color: var(--strong);
+    }
+
+    .status-line {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: min(68vw, 720px);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+    }
+
+    .shell {
+      width: min(1520px, calc(100% - (var(--page-x) * 2)));
+      margin: var(--page-y) auto clamp(18px, 3vw, 40px);
+      min-width: 0;
+    }
+
+    .banner {
+      padding: 11px 13px;
+      border-radius: var(--radius);
+      background: var(--low-bg);
+      color: var(--low-text);
+      border: 1px solid color-mix(in srgb, var(--low-text) 24%, transparent);
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .banner.is-visible {
+      display: block;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 174px), 1fr));
+      gap: clamp(8px, 1vw, 12px);
+      margin-bottom: 12px;
+      min-width: 0;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: clamp(12px, 1.3vw, 16px);
+      box-shadow: var(--shadow-soft);
+      min-width: 0;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .stat-value {
+      font-size: clamp(22px, 2.4vw, 28px);
+      line-height: 1.1;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+      color: var(--strong);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+      gap: 12px;
+      align-items: start;
+      min-width: 0;
+    }
+
+    .workspace > div,
+    aside {
+      min-width: 0;
+    }
+
+    aside {
+      position: sticky;
+      top: 78px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 12px;
+      min-width: 0;
+    }
+
+    .panel-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 850;
+      color: var(--strong);
+    }
+
+    .panel-body {
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .form-grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 9px 10px;
+      background: var(--input-bg);
+      color: var(--text);
+      outline: none;
+      min-height: var(--control-h);
+    }
+
+    textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    input::placeholder {
+      color: color-mix(in srgb, var(--muted) 72%, transparent);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+    }
+
+    input[readonly] {
+      background: var(--surface-muted);
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: var(--control-h);
+      min-width: 40px;
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: #ffffff;
+      background: var(--primary);
+      font-weight: 850;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btn:hover {
+      background: var(--primary-strong);
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      background: color-mix(in srgb, var(--muted) 68%, var(--surface));
+      color: var(--surface-soft);
+    }
+
+    .btn-secondary {
+      background: var(--surface-muted);
+      color: var(--text);
+      border: 1px solid var(--line-strong);
+    }
+
+    .btn-secondary:hover {
+      background: color-mix(in srgb, var(--surface-muted) 76%, var(--primary-soft));
+    }
+
+    .btn-success {
+      background: var(--teal);
+    }
+
+    .btn-success:hover {
+      background: var(--teal-strong);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-strong);
+    }
+
+    .btn-small {
+      min-height: 32px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .message {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: var(--radius);
+      font-weight: 750;
+      display: none;
+    }
+
+    .message.is-visible {
+      display: block;
+    }
+
+    .message.success {
+      color: var(--ok-text);
+      background: var(--ok-bg);
+      border: 1px solid color-mix(in srgb, var(--ok-text) 24%, transparent);
+    }
+
+    .message.error {
+      color: var(--out-text);
+      background: var(--out-bg);
+      border: 1px solid color-mix(in srgb, var(--out-text) 24%, transparent);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(150px, 180px) auto;
+      gap: 8px;
+      width: 100%;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .toolbar.logs {
+      grid-template-columns: minmax(220px, 1fr) minmax(150px, 180px) auto;
+    }
+
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      max-height: var(--table-max-h);
+      background: var(--surface);
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1020px;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 12.5px;
+    }
+
+    th,
+    td {
+      padding: 9px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--surface-soft);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    tbody tr:hover {
+      background: color-mix(in srgb, var(--primary-soft) 36%, transparent);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td.truncate {
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .number {
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge.ok {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+    }
+
+    .badge.low {
+      background: var(--low-bg);
+      color: var(--low-text);
+    }
+
+    .badge.out {
+      background: var(--out-bg);
+      color: var(--out-text);
+    }
+
+    .badge.in {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+    }
+
+    .badge.outgoing {
+      background: var(--info-bg);
+      color: var(--info-text);
+    }
+
+    .badge.adjust {
+      background: var(--adjust-bg);
+      color: var(--adjust-text);
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+      padding: 22px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    @media (max-width: 1120px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+      }
+
+      :root {
+        --table-max-h: min(48dvh, 500px);
+      }
+    }
+
+    @media (max-width: 820px) {
+      .topbar-inner {
+        align-items: flex-start;
+        padding: 10px 0;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .top-actions .btn {
+        flex: 1 1 140px;
+      }
+
+      .status-line {
+        max-width: calc(100vw - 72px);
+      }
+
+      .form-grid,
+      .form-grid.two {
+        grid-template-columns: 1fr;
+      }
+
+      .span-2,
+      .span-4 {
+        grid-column: span 1;
+      }
+
+      .toolbar,
+      .toolbar.logs {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row .btn {
+        flex: 1 1 160px;
+      }
+
+      input,
+      select,
+      textarea {
+        font-size: 16px;
+      }
+
+      .panel-header {
+        align-items: stretch;
+      }
+
+      .panel-title {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --page-x: 8px;
+        --page-y: 8px;
+        --control-h: 42px;
+        --table-max-h: min(44dvh, 420px);
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .panel-body,
+      .panel-header {
+        padding: 10px;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        padding: 5px;
+      }
+
+      .brand h1 {
+        font-size: 18px;
+      }
+
+      table {
+        min-width: 860px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="assets/techgeekph-mark.png" alt="TechGeekPH">
+        </div>
+        <div>
+          <h1>TechGeekPH Inventory</h1>
+          <div id="statusLine" class="status-line">Not connected</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button id="refreshBtn" class="btn btn-secondary" type="button">Refresh</button>
+        <button id="setupBtn" class="btn" type="button">Run Setup</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div id="configBanner" class="banner">API URL is not configured. Edit APP_CONFIG.API_URL in this file.</div>
+
+    <section class="summary-grid" aria-label="Inventory summary">
+      <div class="stat">
+        <div class="stat-label">Total Items</div>
+        <div id="totalItems" class="stat-value">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total Units</div>
+        <div id="totalUnits" class="stat-value">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Low Stock</div>
+        <div id="lowStock" class="stat-value">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Out of Stock</div>
+        <div id="outOfStock" class="stat-value">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Inventory Value</div>
+        <div id="inventoryValue" class="stat-value">PHP 0.00</div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div>
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Encode Transaction</h2>
+          </div>
+
+          <div class="panel-body">
+            <form id="transactionForm">
+              <div class="form-grid">
+                <div>
+                  <label for="type">Type</label>
+                  <select id="type" required>
+                    <option value="IN">IN / Restock</option>
+                    <option value="OUT">OUT / Release</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="code">Item Code</label>
+                  <select id="code" required>
+                    <option value="">Select item</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="currentStock">Current Stock</label>
+                  <input id="currentStock" readonly>
+                </div>
+
+                <div>
+                  <label for="itemPrice">Price</label>
+                  <input id="itemPrice" readonly>
+                </div>
+
+                <div>
+                  <label for="qty">Quantity</label>
+                  <input id="qty" type="number" min="0.01" step="0.01" required>
+                </div>
+
+                <div>
+                  <label for="totalAmount">Total Amount</label>
+                  <input id="totalAmount" readonly>
+                </div>
+
+                <div>
+                  <label for="technician">Technician</label>
+                  <input id="technician" autocomplete="off">
+                </div>
+
+                <div>
+                  <label for="client">Client / Account</label>
+                  <input id="client" autocomplete="off">
+                </div>
+
+                <div>
+                  <label for="siteName">Site Name</label>
+                  <input id="siteName" autocomplete="off">
+                </div>
+
+                <div>
+                  <label for="encodedBy">Encoded By</label>
+                  <input id="encodedBy" autocomplete="off">
+                </div>
+
+                <div class="span-2">
+                  <label for="remarks">Remarks</label>
+                  <textarea id="remarks"></textarea>
+                </div>
+              </div>
+
+              <div class="button-row" style="margin-top: 14px;">
+                <button id="saveTransactionBtn" class="btn btn-success" type="submit">Save Transaction</button>
+                <button id="clearTransactionBtn" class="btn btn-secondary" type="button">Clear</button>
+              </div>
+
+              <div id="transactionMessage" class="message"></div>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Stock List</h2>
+            <div class="toolbar">
+              <input id="searchStock" type="search" placeholder="Search code, item, category">
+              <select id="statusFilter">
+                <option value="">All status</option>
+                <option value="OK">OK</option>
+                <option value="LOW STOCK">Low stock</option>
+                <option value="OUT OF STOCK">Out of stock</option>
+              </select>
+              <button id="exportStockBtn" class="btn btn-secondary" type="button">Export Stock</button>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Item Name</th>
+                    <th>Unit</th>
+                    <th>Category</th>
+                    <th class="right">Stock</th>
+                    <th class="right">Price</th>
+                    <th class="right">Value</th>
+                    <th class="right">Min</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="stockTable">
+                  <tr><td colspan="11" class="empty">Loading</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Recent Logs</h2>
+            <div class="toolbar logs">
+              <input id="searchLogs" type="search" placeholder="Search logs">
+              <select id="typeFilter">
+                <option value="">All types</option>
+                <option value="IN">IN</option>
+                <option value="OUT">OUT</option>
+                <option value="ADJUST">Adjust</option>
+              </select>
+              <button id="exportLogsBtn" class="btn btn-secondary" type="button">Export Logs</button>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Code</th>
+                    <th>Item Name</th>
+                    <th class="right">Qty</th>
+                    <th>Unit</th>
+                    <th class="right">Price</th>
+                    <th class="right">Total</th>
+                    <th>Technician</th>
+                    <th>Client</th>
+                    <th>Site</th>
+                    <th>Remarks</th>
+                    <th>Encoded By</th>
+                  </tr>
+                </thead>
+                <tbody id="logsTable">
+                  <tr><td colspan="13" class="empty">Loading</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Item Master</h2>
+          </div>
+
+          <div class="panel-body">
+            <form id="itemForm">
+              <div class="form-grid two">
+                <div>
+                  <label for="itemCode">Code</label>
+                  <input id="itemCode" required autocomplete="off">
+                </div>
+
+                <div>
+                  <label for="itemUnit">Unit</label>
+                  <input id="itemUnit" value="pcs" autocomplete="off">
+                </div>
+
+                <div class="span-2">
+                  <label for="itemName">Item Name</label>
+                  <input id="itemName" required autocomplete="off">
+                </div>
+
+                <div>
+                  <label for="itemCategory">Category</label>
+                  <input id="itemCategory" autocomplete="off">
+                </div>
+
+                <div>
+                  <label for="itemStock">Stock</label>
+                  <input id="itemStock" type="number" min="0" step="0.01" value="0">
+                </div>
+
+                <div>
+                  <label for="itemPriceField">Price</label>
+                  <input id="itemPriceField" type="number" min="0" step="0.01" value="0">
+                </div>
+
+                <div>
+                  <label for="itemMinStock">Min Stock</label>
+                  <input id="itemMinStock" type="number" min="0" step="0.01" value="0">
+                </div>
+
+                <div class="span-2">
+                  <label for="itemRemarks">Remarks</label>
+                  <textarea id="itemRemarks"></textarea>
+                </div>
+
+                <div class="span-2">
+                  <label for="itemEncodedBy">Encoded By</label>
+                  <input id="itemEncodedBy" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="button-row" style="margin-top: 14px;">
+                <button id="saveItemBtn" class="btn" type="submit">Save Item</button>
+                <button id="newItemBtn" class="btn btn-secondary" type="button">New Item</button>
+              </div>
+
+              <div id="itemMessage" class="message"></div>
+            </form>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const APP_CONFIG = {
+      API_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+      API_TOKEN: "",
+      LOGS_LIMIT: 100
+    };
+
+    const state = {
+      items: [],
+      logs: [],
+      loading: false,
+      lastUpdated: ""
+    };
+
+    document.addEventListener("DOMContentLoaded", init);
+
+    function init() {
+      bindEvents();
+      updateConfigBanner();
+      loadData();
+    }
+
+    function bindEvents() {
+      el("refreshBtn").addEventListener("click", loadData);
+      el("setupBtn").addEventListener("click", runSetup);
+      el("transactionForm").addEventListener("submit", saveTransaction);
+      el("itemForm").addEventListener("submit", saveItem);
+      el("clearTransactionBtn").addEventListener("click", clearTransactionForm);
+      el("newItemBtn").addEventListener("click", clearItemForm);
+      el("code").addEventListener("change", showSelectedItem);
+      el("qty").addEventListener("input", computeTotal);
+      el("searchStock").addEventListener("input", renderStockTable);
+      el("statusFilter").addEventListener("change", renderStockTable);
+      el("searchLogs").addEventListener("input", renderLogsTable);
+      el("typeFilter").addEventListener("change", renderLogsTable);
+      el("exportStockBtn").addEventListener("click", exportStockCsv);
+      el("exportLogsBtn").addEventListener("click", exportLogsCsv);
+
+      document.addEventListener("click", function(event) {
+        const action = event.target.closest("[data-action]");
+        if (!action) return;
+
+        if (action.dataset.action === "edit-item") {
+          fillItemForm(action.dataset.code || "");
+        }
+      });
+    }
+
+    function el(id) {
+      return document.getElementById(id);
+    }
+
+    function isApiConfigured() {
+      return APP_CONFIG.API_URL &&
+        !APP_CONFIG.API_URL.includes("PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE");
+    }
+
+    function updateConfigBanner() {
+      el("configBanner").classList.toggle("is-visible", !isApiConfigured());
+    }
+
+    async function runSetup() {
+      if (!isApiConfigured()) {
+        notify("transactionMessage", "API URL is not configured.", "error");
+        return;
+      }
+
+      const button = el("setupBtn");
+      setButtonLoading(button, true, "Setting up");
+
+      try {
+        const response = await api("setup");
+        notify("transactionMessage", response.message || "Setup completed.", "success");
+        await loadData();
+      } catch (error) {
+        notify("transactionMessage", error.message, "error");
+      } finally {
+        setButtonLoading(button, false, "Run Setup");
+      }
+    }
+
+    async function loadData() {
+      updateConfigBanner();
+
+      if (!isApiConfigured()) {
+        renderEmptyState();
+        el("statusLine").textContent = "Configure Apps Script API URL";
+        return;
+      }
+
+      if (state.loading) return;
+      state.loading = true;
+      setButtonLoading(el("refreshBtn"), true, "Loading");
+      el("statusLine").textContent = "Loading";
+
+      try {
+        const data = await api("getInventoryData", { logsLimit: APP_CONFIG.LOGS_LIMIT });
+        state.items = data.items || [];
+        state.logs = data.logs || [];
+        state.lastUpdated = data.serverTime || "";
+
+        renderSummary(data.summary || {});
+        populateItems();
+        renderStockTable();
+        renderLogsTable();
+        showSelectedItem();
+        el("statusLine").textContent = state.lastUpdated ? "Updated " + state.lastUpdated : "Connected";
+      } catch (error) {
+        notify("transactionMessage", error.message, "error");
+        el("statusLine").textContent = "Connection error";
+      } finally {
+        state.loading = false;
+        setButtonLoading(el("refreshBtn"), false, "Refresh");
+      }
+    }
+
+    function renderEmptyState() {
+      renderSummary({});
+      el("stockTable").innerHTML = '<tr><td colspan="11" class="empty">No API connection</td></tr>';
+      el("logsTable").innerHTML = '<tr><td colspan="13" class="empty">No API connection</td></tr>';
+    }
+
+    function renderSummary(summary) {
+      el("totalItems").textContent = formatNumber(summary.totalItems || 0);
+      el("totalUnits").textContent = formatQty(summary.totalUnits || 0);
+      el("lowStock").textContent = formatNumber(summary.lowStock || 0);
+      el("outOfStock").textContent = formatNumber(summary.outOfStock || 0);
+      el("inventoryValue").textContent = formatCurrency(summary.inventoryValue || 0);
+    }
+
+    function populateItems() {
+      const select = el("code");
+      const selected = select.value;
+      select.innerHTML = '<option value="">Select item</option>';
+
+      state.items
+        .slice()
+        .sort(function(a, b) {
+          return String(a.itemName).localeCompare(String(b.itemName));
+        })
+        .forEach(function(item) {
+          const option = document.createElement("option");
+          option.value = item.code;
+          option.textContent = item.code + " - " + item.itemName;
+          select.appendChild(option);
+        });
+
+      if (selected && state.items.some(function(item) { return item.code === selected; })) {
+        select.value = selected;
+      }
+    }
+
+    function getSelectedItem() {
+      const code = el("code").value;
+      return state.items.find(function(item) { return item.code === code; });
+    }
+
+    function showSelectedItem() {
+      const item = getSelectedItem();
+
+      if (!item) {
+        el("currentStock").value = "";
+        el("itemPrice").value = "";
+        el("totalAmount").value = "";
+        return;
+      }
+
+      el("currentStock").value = formatQty(item.stock) + " " + item.unit;
+      el("itemPrice").value = formatCurrency(item.price || 0);
+      computeTotal();
+    }
+
+    function computeTotal() {
+      const item = getSelectedItem();
+      const qty = Number(el("qty").value) || 0;
+
+      el("totalAmount").value = item ? formatCurrency(qty * Number(item.price || 0)) : "";
+    }
+
+    async function saveTransaction(event) {
+      event.preventDefault();
+
+      const item = getSelectedItem();
+      const qty = Number(el("qty").value) || 0;
+      const type = el("type").value;
+
+      if (!item || qty <= 0) {
+        notify("transactionMessage", "Select an item and enter a valid quantity.", "error");
+        return;
+      }
+
+      if (type === "OUT" && qty > Number(item.stock || 0)) {
+        notify("transactionMessage", "Not enough stock. Current stock: " + formatQty(item.stock) + " " + item.unit, "error");
+        return;
+      }
+
+      const payload = {
+        type: type,
+        code: item.code,
+        qty: qty,
+        technician: el("technician").value,
+        client: el("client").value,
+        siteName: el("siteName").value,
+        remarks: el("remarks").value,
+        encodedBy: el("encodedBy").value
+      };
+
+      setButtonLoading(el("saveTransactionBtn"), true, "Saving");
+
+      try {
+        const response = await api("addTransaction", payload);
+        notify("transactionMessage", response.message || "Transaction saved.", "success");
+        clearTransactionForm(true);
+        await loadData();
+      } catch (error) {
+        notify("transactionMessage", error.message, "error");
+      } finally {
+        setButtonLoading(el("saveTransactionBtn"), false, "Save Transaction");
+      }
+    }
+
+    async function saveItem(event) {
+      event.preventDefault();
+
+      const payload = {
+        code: el("itemCode").value,
+        itemName: el("itemName").value,
+        unit: el("itemUnit").value,
+        category: el("itemCategory").value,
+        stock: el("itemStock").value,
+        price: el("itemPriceField").value,
+        minStock: el("itemMinStock").value,
+        remarks: el("itemRemarks").value,
+        encodedBy: el("itemEncodedBy").value
+      };
+
+      if (!payload.code || !payload.itemName) {
+        notify("itemMessage", "Complete Item Code and Item Name.", "error");
+        return;
+      }
+
+      setButtonLoading(el("saveItemBtn"), true, "Saving");
+
+      try {
+        const response = await api("upsertItem", payload);
+        notify("itemMessage", response.message || "Item saved.", "success");
+        await loadData();
+      } catch (error) {
+        notify("itemMessage", error.message, "error");
+      } finally {
+        setButtonLoading(el("saveItemBtn"), false, "Save Item");
+      }
+    }
+
+    function clearTransactionForm(keepEncoder) {
+      const encodedBy = el("encodedBy").value;
+      el("transactionForm").reset();
+      el("type").value = "IN";
+      if (keepEncoder) el("encodedBy").value = encodedBy;
+      showSelectedItem();
+    }
+
+    function clearItemForm() {
+      const encodedBy = el("itemEncodedBy").value;
+      el("itemForm").reset();
+      el("itemUnit").value = "pcs";
+      el("itemStock").value = "0";
+      el("itemPriceField").value = "0";
+      el("itemMinStock").value = "0";
+      el("itemEncodedBy").value = encodedBy;
+      el("itemCode").focus();
+    }
+
+    function fillItemForm(code) {
+      const item = state.items.find(function(entry) { return entry.code === code; });
+      if (!item) return;
+
+      el("itemCode").value = item.code;
+      el("itemName").value = item.itemName;
+      el("itemUnit").value = item.unit || "pcs";
+      el("itemCategory").value = item.category || "";
+      el("itemStock").value = item.stock || 0;
+      el("itemPriceField").value = item.price || 0;
+      el("itemMinStock").value = item.minStock || 0;
+      el("itemRemarks").value = item.remarks || "";
+      el("itemCode").focus();
+    }
+
+    function getFilteredStock() {
+      const search = el("searchStock").value.trim().toLowerCase();
+      const status = el("statusFilter").value;
+
+      return state.items.filter(function(item) {
+        const matchesStatus = !status || item.status === status;
+        const haystack = [
+          item.code,
+          item.itemName,
+          item.unit,
+          item.category,
+          item.remarks,
+          item.status
+        ].join(" ").toLowerCase();
+
+        return matchesStatus && (!search || haystack.includes(search));
+      });
+    }
+
+    function renderStockTable() {
+      const tbody = el("stockTable");
+      const filtered = getFilteredStock();
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="empty">No stock records found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(function(item) {
+        return '<tr>' +
+          '<td><strong>' + escapeHtml(item.code) + '</strong></td>' +
+          '<td class="truncate" title="' + escapeHtml(item.itemName) + '">' + escapeHtml(item.itemName) + '</td>' +
+          '<td>' + escapeHtml(item.unit) + '</td>' +
+          '<td class="truncate" title="' + escapeHtml(item.category) + '">' + escapeHtml(item.category) + '</td>' +
+          '<td class="number right">' + formatQty(item.stock) + '</td>' +
+          '<td class="number right">' + formatCurrency(item.price || 0) + '</td>' +
+          '<td class="number right">' + formatCurrency(item.totalValue || 0) + '</td>' +
+          '<td class="number right">' + formatQty(item.minStock) + '</td>' +
+          '<td>' + statusBadge(item.status) + '</td>' +
+          '<td class="truncate" title="' + escapeHtml(item.remarks) + '">' + escapeHtml(item.remarks) + '</td>' +
+          '<td><button class="btn btn-secondary btn-small" type="button" data-action="edit-item" data-code="' + escapeHtml(item.code) + '">Edit</button></td>' +
+          '</tr>';
+      }).join("");
+    }
+
+    function getFilteredLogs() {
+      const search = el("searchLogs").value.trim().toLowerCase();
+      const type = el("typeFilter").value;
+
+      return state.logs.filter(function(log) {
+        const matchesType = !type || String(log.type).toUpperCase() === type;
+        const haystack = [
+          log.date,
+          log.type,
+          log.code,
+          log.itemName,
+          log.technician,
+          log.client,
+          log.siteName,
+          log.remarks,
+          log.encodedBy
+        ].join(" ").toLowerCase();
+
+        return matchesType && (!search || haystack.includes(search));
+      });
+    }
+
+    function renderLogsTable() {
+      const tbody = el("logsTable");
+      const filtered = getFilteredLogs();
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="13" class="empty">No logs found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(function(log) {
+        return '<tr>' +
+          '<td>' + escapeHtml(log.date) + '</td>' +
+          '<td>' + typeBadge(log.type) + '</td>' +
+          '<td><strong>' + escapeHtml(log.code) + '</strong></td>' +
+          '<td class="truncate" title="' + escapeHtml(log.itemName) + '">' + escapeHtml(log.itemName) + '</td>' +
+          '<td class="number right">' + formatQty(log.qty) + '</td>' +
+          '<td>' + escapeHtml(log.unit) + '</td>' +
+          '<td class="number right">' + formatCurrency(log.price || 0) + '</td>' +
+          '<td class="number right">' + formatCurrency(log.total || 0) + '</td>' +
+          '<td class="truncate" title="' + escapeHtml(log.technician) + '">' + escapeHtml(log.technician) + '</td>' +
+          '<td class="truncate" title="' + escapeHtml(log.client) + '">' + escapeHtml(log.client) + '</td>' +
+          '<td class="truncate" title="' + escapeHtml(log.siteName) + '">' + escapeHtml(log.siteName) + '</td>' +
+          '<td class="truncate" title="' + escapeHtml(log.remarks) + '">' + escapeHtml(log.remarks) + '</td>' +
+          '<td class="truncate" title="' + escapeHtml(log.encodedBy) + '">' + escapeHtml(log.encodedBy) + '</td>' +
+          '</tr>';
+      }).join("");
+    }
+
+    function statusBadge(status) {
+      const key = String(status || "").toUpperCase();
+      let className = "ok";
+      if (key === "LOW STOCK") className = "low";
+      if (key === "OUT OF STOCK") className = "out";
+      return '<span class="badge ' + className + '">' + escapeHtml(status || "OK") + '</span>';
+    }
+
+    function typeBadge(type) {
+      const key = String(type || "").toUpperCase();
+      let className = "adjust";
+      if (key === "IN") className = "in";
+      if (key === "OUT") className = "outgoing";
+      return '<span class="badge ' + className + '">' + escapeHtml(type || "") + '</span>';
+    }
+
+    function exportStockCsv() {
+      const rows = getFilteredStock().map(function(item) {
+        return {
+          Code: item.code,
+          "Item Name": item.itemName,
+          Unit: item.unit,
+          Category: item.category,
+          Stock: item.stock,
+          Price: item.price,
+          "Total Value": item.totalValue,
+          "Min Stock": item.minStock,
+          Status: item.status,
+          Remarks: item.remarks
+        };
+      });
+
+      downloadCsv("stock-list.csv", rows);
+    }
+
+    function exportLogsCsv() {
+      const rows = getFilteredLogs().map(function(log) {
+        return {
+          Date: log.date,
+          Type: log.type,
+          Code: log.code,
+          "Item Name": log.itemName,
+          Qty: log.qty,
+          Unit: log.unit,
+          Price: log.price,
+          Total: log.total,
+          Technician: log.technician,
+          Client: log.client,
+          Site: log.siteName,
+          Remarks: log.remarks,
+          "Encoded By": log.encodedBy
+        };
+      });
+
+      downloadCsv("inventory-logs.csv", rows);
+    }
+
+    function downloadCsv(filename, rows) {
+      if (!rows.length) {
+        notify("transactionMessage", "No records to export.", "error");
+        return;
+      }
+
+      const headers = Object.keys(rows[0]);
+      const csv = [
+        headers.join(","),
+        rows.map(function(row) {
+          return headers.map(function(header) {
+            return csvEscape(row[header]);
+          }).join(",");
+        }).join("\n")
+      ].join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function csvEscape(value) {
+      const text = value === null || value === undefined ? "" : String(value);
+      return '"' + text.replace(/"/g, '""') + '"';
+    }
+
+    function api(action, params) {
+      return new Promise(function(resolve, reject) {
+        if (!isApiConfigured()) {
+          reject(new Error("API URL is not configured."));
+          return;
+        }
+
+        const callbackName = "__inventoryCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        const script = document.createElement("script");
+        const url = new URL(APP_CONFIG.API_URL);
+        const timer = window.setTimeout(function() {
+          cleanup();
+          reject(new Error("API request timed out."));
+        }, 30000);
+
+        url.searchParams.set("action", action);
+        url.searchParams.set("callback", callbackName);
+
+        if (APP_CONFIG.API_TOKEN) {
+          url.searchParams.set("token", APP_CONFIG.API_TOKEN);
+        }
+
+        Object.keys(params || {}).forEach(function(key) {
+          const value = params[key];
+          url.searchParams.set(key, value === null || value === undefined ? "" : value);
+        });
+
+        window[callbackName] = function(response) {
+          cleanup();
+
+          if (response && response.success === false) {
+            reject(new Error(response.error || "Request failed."));
+            return;
+          }
+
+          resolve(response || {});
+        };
+
+        script.src = url.toString();
+        script.async = true;
+        script.onerror = function() {
+          cleanup();
+          reject(new Error("API connection failed."));
+        };
+
+        document.body.appendChild(script);
+
+        function cleanup() {
+          window.clearTimeout(timer);
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+      });
+    }
+
+    function notify(targetId, text, type) {
+      const target = el(targetId);
+      target.textContent = text;
+      target.className = "message " + type + " is-visible";
+
+      window.clearTimeout(target._timer);
+      target._timer = window.setTimeout(function() {
+        target.classList.remove("is-visible");
+      }, 5000);
+    }
+
+    function setButtonLoading(button, isLoading, text) {
+      button.disabled = isLoading;
+      button.textContent = text;
+    }
+
+    function formatCurrency(value) {
+      return "\u20b1" + Number(value || 0).toLocaleString("en-PH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatNumber(value) {
+      return Number(value || 0).toLocaleString("en-PH", {
+        maximumFractionDigits: 0
+      });
+    }
+
+    function formatQty(value) {
+      const number = Number(value || 0);
+      return number.toLocaleString("en-PH", {
+        minimumFractionDigits: number % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function escapeHtml(value) {
+      const text = value === null || value === undefined ? "" : String(value);
+      return text.replace(/[&<>"']/g, function(match) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[match];
+      });
+    }
+  </script>
+</body>
+</html>
